@@ -14,7 +14,7 @@ license "CC BY-NC"
 
 files { "shared/sh_config.lua", "shared/sh_locales.lua" }
 shared_scripts { "@ox_lib/init.lua", "shared/sh_functions.lua" }
-server_scripts { "bridge/server/*.lua" }
+server_scripts { "bridge/server/*.lua", "server/*.lua" }
 client_scripts { "client/*.lua" }
 
 ui_page { "web/index.html" }

@@ -113,7 +113,7 @@ local function OpenShop(shopIndex)
 
 	local currentShop = Config.Shops[shopIndex]
 	DebugPrint(json.encode({ "Categories:", currentShop.Categories, "Items:", currentShop.Items }))
-	SendNUIMessage({ action = "setShopData", categories = currentShop.Categories, items = currentShop.Items })
+	SendNUIMessage({ action = "setShopData", locales = currentShop.Locales, categories = currentShop.Categories, items = currentShop.Items })
 
 	lib.callback.await("cloud-shop:server:InShop", false, true)
 	TriggerScreenblurFadeIn(0)

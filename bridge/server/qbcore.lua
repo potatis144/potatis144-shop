@@ -7,12 +7,87 @@ local QBCore = exports["qb-core"]:GetCoreObject()
 
 local inShop = {}
 
-local function ProcessTransaction(source, type, cartArray)
+local function GetPlayerId(source)
+	if not source or source == 0 then return nil end
+	return QBCore.Functions.GetPlayer(source)
+end
+
+local function CanCarryItem(source, itemName, itemQuantity)
+	if Config.OxInventory then
+		return exports.ox_inventory:CanCarryItem(source, itemName, itemQuantity)
+	else
+		exports["qb-inventory"]:CanAddItem(source, itemName, itemQuantity)
+	end
+end
+
+local function AddItem(source, itemName, itemQuantity)
+	if Config.OxInventory then
+		return exports.ox_inventory:AddItem(source, itemName, itemQuantity)
+	else
+		return exports["qb-inventory"]:AddItem(source, itemName, itemQuantity, false, false, "cloud-shop:AddItem")
+	end
+end
+
+local function HasLicense(source, licenseType)
+	if not source or source == 0 then return false end
+	if not licenseType then return false end
+
+	local Player = GetPlayerId(source)
+	if not Player then return false end
+
+	return Player.PlayerData.metadata.licences[licenseType]
+end
+
+local function BuyLicense(source, shopData)
 	if not source or source == 0 then return false, "Invalid source" end
-	if not cartArray or #cartArray == 0 then return false, "Empty cart" end
+	if not shopData or next(shopData) == nil then return false, "Invalid or empty shop data" end
 	if not inShop[source] then return false, "Not in shop state" end
 
-	local Player = QBCore.Functions.GetPlayer(source)
+	local Player = GetPlayerId(source)
+	if not Player then return false, "Player not found" end
+
+	local licenseType = shopData.License.Type
+	local amount = shopData.License.Price
+
+	local moneyAvailable = Player.Functions.GetMoney("cash")
+	local bankAvailable = Player.Functions.GetMoney("bank")
+
+	local accountType
+	if moneyAvailable >= amount then
+		accountType = "cash"
+	elseif bankAvailable >= amount then
+		accountType = "bank"
+	else
+		ServerNotify(source, Locales.License.NoMoney:format(licenseType), "error")
+		return false, "No money"
+	end
+
+	Player.Functions.RemoveMoney(accountType, amount)
+
+	local licenseTable = Player.PlayerData.metadata.licences
+	licenseTable[licenseType] = true
+	Player.Functions.SetMetaData("licences", licenseTable)
+
+	ServerNotify(source, Locales.License.PurchaseSuccess:format(licenseType, amount), "info")
+	return true, "Successfully bought license"
+end
+
+if not Config.WeaponAsItem and not Config.OxInventory then
+	function HasWeapon(source, weaponName)
+		-- add your logic here
+	end
+
+	function AddWeapon(source, weaponName)
+		-- add your logic here
+	end
+end
+
+local function ProcessTransaction(source, type, cartArray)
+	if not source or source == 0 then return false, "Invalid source" end
+	if not cartArray or #cartArray == 0 then return false, "Invalid or empty cart array" end
+	if not inShop[source] then return false, "Not in shop state" end
+
+	local Player = GetPlayerId(source)
 	if not Player then return false, "Player not found" end
 
 	local accountType = type == "bank" and "bank" or "money"
@@ -52,6 +127,11 @@ local function ProcessTransaction(source, type, cartArray)
 	return false, "No items purchased"
 end
 
+lib.callback.register("cloud-shop:server:HasLicense", HasLicense)
+lib.callback.register("cloud-shop:server:BuyLicense", function(source, shopData)
+	local success, reason = BuyLicense(source, shopData)
+	return success, reason
+end)
 lib.callback.register("cloud-shop:server:ProcessTransaction", function(source, type, cartArray)
 	local success, reason = ProcessTransaction(source, type, cartArray)
 	return success, reason

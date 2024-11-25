@@ -17,10 +17,15 @@ return {
 		NoMoney = "You don't have enough money to buy the **%s**.",
 		PurchaseSuccess = "Successfully purchased item(s) for **$%s**.",
 	},
-	TextUI = {
-		OpenShop = "~INPUT_CONTEXT~  View Product Catalog",
+	License = {
+		LicenseRequired = "A **%s** is required to access this shop!",
+		DialogHeader = "A **%s** is required to access this shop!",
+		DialogContent = "Would you like to purchase a **%s** for **$%s**?",
+		NoMoney = "You don't have enough money to buy the **%s**.",
+		PurchaseSuccess = "Successfully purchased a **%s** for **$%s**.",
 	},
-	Target = {
-		OpenShop = "View Product Catalog",
+	OpenShop = {
+		TextUI = "~INPUT_CONTEXT~  View Product Catalog",
+		Target = "View Product Catalog",
 	},
 }

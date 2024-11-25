@@ -2,32 +2,35 @@
 -- For icons, use Iconify: https://icon-sets.iconify.design
 
 return {
-	DebugMode = false, -- Enable print statements for debugging
+
+	--[[ GENERAL CONFIGURATION ]]
 
 	Framework = "esx", -- Supported: "esx", "qbcore", or "custom"
-	WeaponAsItem = true,
-	ImagePath = "nui://ox_inventory/web/images/", -- you can use nui://{YOUR_RESOURCE}/{IMAGE_DIRECTORY} to get images from another resource
+	DebugMode = false, -- Enable print statements for debugging
+	WeaponAsItem = true, -- Treat weapons as inventory items (only supported inventorys)
+	OxInventory = true, -- Uses ox_inventory exports if true
+	ImagePath = "item_images/", -- Use "nui://{YOUR_RESOURCE}/{IMAGE_DIRECTORY}" to use images from another resource (e.g., "nui://ox_inventory/web/images/" for ox_inventory)
 
-	--[[ INTERACT DISTANCE ]]
+	--[[ INTERACTION CONFIGURATION ]]
 
-	Interaction = {
-		TextUIDistance = 3.0,
-		TargetDistance = 3.5,
+	-- Distance
+	InteractionDistance = {
+		TextUI = 3.0,
+		Target = 3.5,
 	},
 
-	--[[ TARGET ]]
-
-	Target = { -- ox_target
+	-- Target Settings (ox_target)
+	Target = {
 		Enabled = false,
 		BoxZoneSize = vec3(4, 4, 4),
 		DrawSprite = true,
 		Icon = "fa-solid fa-cart-shopping", -- https://fontawesome.com
 
-		RemovePed = false,
-		RemoveMarker = true,
+		DisablePeds = false, -- Disables all shop NPC Peds
+		DisableMarkers = true, -- Disables all shop markers
 	},
 
-	--[[ EXAMPLE SHOPS ]]
+	--[[ SHOP CONFIGURATIONS ]]
 
 	Shops = {
 		["shop"] = {
@@ -35,7 +38,7 @@ return {
 				vec4(372.8008, 328.1116, 103.5665, 262.1354), -- Clinton Ave
 				vec4(2555.5110, 380.7313, 108.6229, 0.9597), -- Palomino Ave
 				vec4(-3040.5376, 583.9359, 7.9089, 17.7445), -- Inseno Road
-				vec4(-3243.9229, 1000.0519, 12.8307, 0.7583), --Barbareno Rd
+				vec4(-3243.9229, 1000.0519, 12.8307, 0.7583), -- Barbareno Rd
 				vec4(-2193.4412, 4290.1064, 49.1743, 63.6331), -- Great Ocean Hwy
 				vec4(1959.1536, 3741.4165, 32.3437, 298.7749), -- Niland Ave
 				vec4(2676.5083, 3280.1863, 55.2411, 335.5104), -- Senora Fwy
@@ -114,6 +117,13 @@ return {
 			},
 			]]
 			RenderDistance = 15.0, -- Distance at which the marker or NPCs are visible
+			License = {
+				Required = false, -- Whether a license is required to access the shop
+				BuyDialog = true, -- Displays a dialog prompting the player to purchase the required license
+				Type = "weapon", -- The type of the required license (e.g., "weapon")
+				TypeLabel = "Weapon License", -- The display name of the required license
+				Price = 1000, -- The cost of the license
+			},
 		},
 		["weapon_shop"] = {
 			Locations = {
@@ -227,6 +237,13 @@ return {
 				Scenario = "WORLD_HUMAN_GUARD_STAND",
 			},
 			RenderDistance = 15.0,
+			License = {
+				Required = true,
+				BuyDialog = true,
+				Type = "weapon",
+				TypeLabel = "Weapon License",
+				Price = 1000,
+			},
 		},
 	},
 }

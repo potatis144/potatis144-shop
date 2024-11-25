@@ -88,6 +88,11 @@ return {
 				{ name = "bandage", label = "Bandage", category = "healing", price = 50 },
 				{ name = "medikit", label = "Medikit", category = "healing", price = 200 },
 			},
+			Locales = {
+				mainTitle = "Shop",
+				mainTag = "24/7",
+				mainDescription = "Welcome to your local shop, where we're always here for you, day or night!\nExplore a curated selection of premium goods, tailored to meet your every need.",
+			},
 			Blip = {
 				Name = "Shop [24/7]",
 				Sprite = 59,
@@ -206,8 +211,13 @@ return {
 				{ name = "at_muzzle_squared", label = "Squared Muzzle", category = "attachments", price = 220 },
 				{ name = "at_muzzle_bell", label = "Bell Muzzle", category = "attachments", price = 250 },
 			},
+			Locales = {
+				mainTitle = "Weapon Shop",
+				mainTag = "24/7",
+				mainDescription = "Welcome to your local weapon shop, where we're always here for you, day or night!\nExplore a curated selection of premium goods, tailored to meet your every need.",
+			},
 			Blip = {
-				Name = "Weaponshop [24/7]",
+				Name = "Weapon Shop [24/7]",
 				Sprite = 110,
 				Color = 0,
 				Scale = 0.7,

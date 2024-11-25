@@ -1,10 +1,5 @@
 return {
 	UI = {
-		-- Main Header
-		mainTitle = "Market",
-		mainTag = "24/7",
-		mainDescription = "Welcome to your local 24/7, where we're always here for you, day or night!\nExplore a curated selection of premium goods, tailored to meet your every need.",
-
 		-- Cart Header
 		cartTitle = "Shopping",
 		cartTag = "Cart",

@@ -90,7 +90,7 @@ local function ProcessTransaction(source, type, cartArray)
 	local Player = GetPlayerId(source)
 	if not Player then return false, "Player not found" end
 
-	local accountType = type == "bank" and "bank" or "money"
+	local accountType = type == "bank" and "bank" or "cash"
 	local totalCartPrice = 0
 
 	for _, item in ipairs(cartArray) do

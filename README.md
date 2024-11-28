@@ -14,6 +14,6 @@
 |--- | --- |
 |🛠️・Supported Frameworks: | ESX / QBCore / Custom |
 |⚠️・Dependencies: | [ox_lib](https://github.com/overextended/ox_lib/releases/) |
-|❓・Support: | Yes - [Discord Server](https://discord.gg/jAnEnyGBef) |
+|❓・Support: | [Discord Server](https://discord.gg/jAnEnyGBef) |
 |⚖️・License: | [CC BY-NC](https://creativecommons.org/licenses/by-nc/4.0/) |
 |📄・Lines of Code: | ≈1.800+ |

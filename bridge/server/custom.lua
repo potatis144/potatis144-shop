@@ -133,8 +133,8 @@ local function ProcessTransaction(source, type, cartArray)
 	local totalCartPrice = 0
 
 	for _, item in ipairs(cartArray) do
-		local availableMoney = Player.GetMoney(accountType) -- example
-		local totalItemPrice = item.price * item.quantity
+		local availableMoney = Player.GetMoney(accountType) or 0 -- example
+		local totalItemPrice = (item.price * item.quantity) or 0
 
 		if availableMoney >= totalItemPrice then
 			if item.name:sub(1, 7):lower() == "weapon_" and not Config.WeaponAsItem then

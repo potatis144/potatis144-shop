@@ -35,7 +35,7 @@ local function HasLicense(source, licenseType)
 	local Player = GetPlayerId(source)
 	if not Player then return false end
 
-	return Player.PlayerData.metadata.licences[licenseType]
+	return Player.PlayerData.metadata.licences[licenseType] ~= nil
 end
 
 local function BuyLicense(source, shopData)
@@ -94,8 +94,8 @@ local function ProcessTransaction(source, type, cartArray)
 	local totalCartPrice = 0
 
 	for _, item in ipairs(cartArray) do
-		local availableMoney = Player.Functions.GetMoney(accountType)
-		local totalItemPrice = item.price * item.quantity
+		local availableMoney = Player.Functions.GetMoney(accountType) or 0
+		local totalItemPrice = (item.price * item.quantity) or 0
 
 		if availableMoney >= totalItemPrice then
 			if item.name:sub(1, 7):lower() == "weapon_" and not Config.WeaponAsItem then

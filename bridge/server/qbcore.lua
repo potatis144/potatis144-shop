@@ -16,7 +16,7 @@ local function CanCarryItem(source, itemName, itemQuantity)
 	if Config.OxInventory then
 		return exports.ox_inventory:CanCarryItem(source, itemName, itemQuantity)
 	else
-		exports["qb-inventory"]:CanAddItem(source, itemName, itemQuantity)
+		return exports["qb-inventory"]:CanAddItem(source, itemName, itemQuantity)
 	end
 end
 

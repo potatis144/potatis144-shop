@@ -270,7 +270,7 @@ RegisterNuiCallback("shop:fetchData", function(data, cb)
 			cb(success)
 		end,
 		initShopData = function()
-			cb({ locales = Locales.UI, imagePath = Config.ImagePath })
+			cb({ locales = Locales.UI, imagePath = Config.ImagePath, currencySymbol = Config.CurrencySymbol })
 		end,
 		payCart = function()
 			DebugPrint("[NUI:payCart] Payment Type:", data.type, "Cart Array:", json.encode(data.cart))

@@ -10,6 +10,7 @@ return {
 	WeaponAsItem = true, -- Treat weapons as inventory items (only supported inventorys)
 	OxInventory = true, -- Uses ox_inventory exports if true
 	ImagePath = "item_images/", -- Use "nui://{YOUR_RESOURCE}/{IMAGE_DIRECTORY}" to use images from another resource (e.g., "nui://ox_inventory/web/images/" for ox_inventory)
+	CurrencySymbol = "$",
 
 	--[[ INTERACTION CONFIGURATION ]]
 

@@ -6,7 +6,7 @@ use_experimental_fxv2_oal "yes"
 
 author "yiruzu"
 description "Cloud Resources - Shop"
-version "1.1.4"
+version "1.1.5"
 
 discord "https://discord.gg/jAnEnyGBef"
 repository "https://github.com/yiruzu/cloud-shop"

@@ -35,7 +35,7 @@ local function HasLicense(source, licenseType)
 	local Player = GetPlayerId(source)
 	if not Player then return false end
 
-	return Player.PlayerData.metadata.licences[licenseType] ~= nil
+	return Player.PlayerData.metadata.licences[licenseType]
 end
 
 local function BuyLicense(source, shopData)

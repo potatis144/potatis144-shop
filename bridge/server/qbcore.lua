@@ -24,6 +24,8 @@ local function AddItem(source, itemName, itemQuantity)
 	if Config.OxInventory then
 		return exports.ox_inventory:AddItem(source, itemName, itemQuantity)
 	else
+		local isWeapon = itemName:sub(1, 7):lower() == "weapon_"
+		if isWeapon then return exports["qb-inventory"]:AddItem(source, itemName, itemQuantity, false, { quality = 100 }, "cloud-shop:AddWeapon") end
 		return exports["qb-inventory"]:AddItem(source, itemName, itemQuantity, false, false, "cloud-shop:AddItem")
 	end
 end

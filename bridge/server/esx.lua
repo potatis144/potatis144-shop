@@ -110,7 +110,8 @@ local function ProcessTransaction(source, type, cartArray)
 		local totalItemPrice = (item.price * item.quantity) or 0
 
 		if availableMoney >= totalItemPrice then
-			if item.name:sub(1, 7):lower() == "weapon_" and not Config.WeaponAsItem and not Config.OxInventory then
+			local isWeapon = item.name:sub(1, 7):lower() == "weapon_"
+			if isWeapon and not Config.WeaponAsItem and not Config.OxInventory then
 				if not HasWeapon(source, item.name) then
 					xPlayer.removeAccountMoney(accountType, totalItemPrice)
 					AddWeapon(source, item.name)

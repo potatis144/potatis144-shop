@@ -24,6 +24,8 @@ local function AddItem(source, itemName, itemQuantity)
 	if Config.OxInventory then
 		return exports.ox_inventory:AddItem(source, itemName, itemQuantity)
 	else
+		local isWeapon = itemName:sub(1, 7):lower() == "weapon_"
+		if isWeapon then return exports["qb-inventory"]:AddItem(source, itemName, itemQuantity, false, { quality = 100 }, "cloud-shop:AddWeapon") end
 		return exports["qb-inventory"]:AddItem(source, itemName, itemQuantity, false, false, "cloud-shop:AddItem")
 	end
 end
@@ -98,7 +100,8 @@ local function ProcessTransaction(source, type, cartArray)
 		local totalItemPrice = (item.price * item.quantity) or 0
 
 		if availableMoney >= totalItemPrice then
-			if item.name:sub(1, 7):lower() == "weapon_" and not Config.WeaponAsItem then
+			local isWeapon = item.name:sub(1, 7):lower() == "weapon_"
+			if isWeapon and not Config.WeaponAsItem and not Config.OxInventory then
 				if not HasWeapon(source, item.name) then
 					Player.Functions.RemoveMoney(accountType, totalItemPrice)
 					AddWeapon(source, item.name)

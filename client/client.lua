@@ -1,3 +1,5 @@
+---@diagnostic disable: need-check-nil, undefined-field
+
 --[[ LOAD FILES ]]
 
 local Config = require("shared.sh_config")
@@ -7,6 +9,7 @@ local Locales = require("shared.sh_locales")
 
 local shopPeds = {}
 local inShop = false
+local currentShop = nil
 
 --[[ UTILITY FUNCTIONS ]]
 
@@ -115,19 +118,13 @@ end
 
 --[[ MAIN FUNCTIONS ]]
 
-local function OpenShopUI(shopData)
+local function OpenShopUI()
 	ToggleHud(false)
 	SendNUIMessage({ action = "toggleShop", showShop = true })
 	SetNuiFocus(true, true)
 	inShop = true
 
-	DebugPrint("[OpenShopUI]", json.encode({ "Categories:", shopData.Categories, "Items:", shopData.Items }))
-	SendNUIMessage({
-		action = "setShopData",
-		locales = shopData.Locales,
-		categories = shopData.Categories,
-		items = shopData.Items,
-	})
+	DebugPrint("[OpenShopUI]", json.encode({ "Categories:", currentShop.Categories, "Items:", currentShop.Items }))
 
 	lib.callback.await("cloud-shop:server:InShop", false, true)
 	TriggerScreenblurFadeIn(0)
@@ -135,10 +132,10 @@ local function OpenShopUI(shopData)
 	ApplySpeechToPed("Generic_Hi", "Speech_Params_Force")
 end
 
-local function BuyLicenseDialog(shopData)
+local function BuyLicenseDialog()
 	local buyLicenseDialog = lib.alertDialog({
-		header = Locales.License.DialogHeader:format(shopData.License.TypeLabel),
-		content = Locales.License.DialogContent:format(shopData.License.TypeLabel, shopData.License.Price),
+		header = Locales.License.DialogHeader:format(currentShop.License.TypeLabel),
+		content = Locales.License.DialogContent:format(currentShop.License.TypeLabel, currentShop.License.Price),
 		centered = true,
 		cancel = true,
 		size = "xs",
@@ -146,7 +143,7 @@ local function BuyLicenseDialog(shopData)
 	if buyLicenseDialog == "confirm" then
 		lib.callback.await("cloud-shop:server:InShop", false, true)
 
-		local success, reason = lib.callback.await("cloud-shop:server:BuyLicense", false, shopData)
+		local success, reason = lib.callback.await("cloud-shop:server:BuyLicense", false, currentShop)
 		DebugPrint("[BuyLicenseDialog]", reason)
 
 		local sound = success and "ROBBERY_MONEY_TOTAL" or "CHECKPOINT_MISSED"
@@ -157,22 +154,22 @@ local function BuyLicenseDialog(shopData)
 	end
 end
 
-local function HandleShopWithLicense(shopData)
-	local hasLicense = lib.callback.await("cloud-shop:server:HasLicense", false, shopData.License.Type)
+local function HandleShopWithLicense()
+	local hasLicense = lib.callback.await("cloud-shop:server:HasLicense", false, currentShop.License.Type)
 	if hasLicense then
-		OpenShopUI(shopData)
+		OpenShopUI()
 	else
-		if not shopData.License.BuyDialog then ClientNotify(Locales.License.LicenseRequired:format(shopData.License.TypeLabel), "error") end
-		if shopData.License.BuyDialog then BuyLicenseDialog(shopData) end
+		if not currentShop.License.BuyDialog then ClientNotify(Locales.License.LicenseRequired:format(currentShop.License.TypeLabel), "error") end
+		if currentShop.License.BuyDialog then BuyLicenseDialog() end
 	end
 end
 
 local function OpenShop(shopId)
-	local shopData = Config.Shops[shopId]
-	if shopData.License.Required then
-		HandleShopWithLicense(shopData)
+	currentShop = Config.Shops[shopId]
+	if currentShop.License.Required then
+		HandleShopWithLicense()
 	else
-		OpenShopUI(shopData)
+		OpenShopUI()
 	end
 end
 
@@ -210,7 +207,8 @@ local function CreatePoints(shopId, shopData, shopPos)
 		if not (Config.Target.Enabled and Config.Target.DisableMarkers) and shopData.Marker and not inShop then DrawMarker(shopData.Marker.Type, self.coords.x, self.coords.y, self.coords.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, shopData.Marker.Size.x, shopData.Marker.Size.y, shopData.Marker.Size.z, shopData.Marker.Color[1], shopData.Marker.Color[2], shopData.Marker.Color[3], shopData.Marker.Color[4], shopData.Marker.BobUpAndDown, shopData.Marker.FaceCamera, 2, shopData.Marker.Rotate) end
 		if not Config.Target.Enabled then
 			local playerPed = cache.ped
-			if self.isClosest and self.currentDistance < Config.InteractionDistance.TextUI and not (IsPedDeadOrDying(playerPed, true) or IsPedFatallyInjured(playerPed)) and not IsPedInAnyVehicle(playerPed, false) then
+			local isDead = IsPlayerDead(cache.playerId)
+			if self.isClosest and self.currentDistance < Config.InteractionDistance.TextUI and not isDead and not IsPedInAnyVehicle(playerPed, false) then
 				if not inShop then TextUI(Locales.OpenShop.TextUI) end
 				if IsControlJustReleased(0, 38) then OpenShop(shopId) end
 			end
@@ -269,15 +267,22 @@ RegisterNuiCallback("shop:fetchData", function(data, cb)
 			local success = pcall(CloseShopUI)
 			cb(success)
 		end,
-		initShopData = function()
-			cb({ locales = Locales.UI, imagePath = Config.ImagePath, currencySymbol = Config.CurrencySymbol })
-		end,
 		payCart = function()
 			DebugPrint("[NUI:payCart] Payment Type:", data.type, "Cart Array:", json.encode(data.cart))
 
 			local success = HandleTransaction(data.type, data.cart)
 			if success then ApplySpeechToPed("Generic_Thanks", "Speech_Params_Force_Shouted_Critical") end
 			cb(success)
+		end,
+		getCategories = function()
+			cb({ categories = currentShop.Categories })
+		end,
+		getItems = function()
+			cb({ items = currentShop.Items })
+		end,
+		getLocales = function()
+			Locales.UI.mainHeader = currentShop.Locales
+			cb({ imagePath = Config.ImagePath, locales = Locales.UI })
 		end,
 	}
 
@@ -289,8 +294,10 @@ end)
 
 AddEventHandler("onResourceStop", function(resourceName)
 	if GetCurrentResourceName() ~= resourceName then return end
-	if inShop then CloseShopUI() end
-	TriggerScreenblurFadeOut(0)
+	if inShop then
+		TriggerScreenblurFadeOut(0)
+		CloseShopUI()
+	end
 	DeletePeds()
 end)
 
@@ -299,7 +306,7 @@ AddEventHandler("gameEventTriggered", function(event, data)
 	local player, playerDead = data[1], data[4]
 	if not IsPedAPlayer(player) then return end
 	local currentPlayer = cache.playerId
-	if playerDead and NetworkGetPlayerIndexFromPed(player) == currentPlayer and (IsPedDeadOrDying(player, true) or IsPedFatallyInjured(player)) then
+	if playerDead and NetworkGetPlayerIndexFromPed(player) == currentPlayer and IsPlayerDead(cache.playerId) then
 		if inShop then CloseShopUI() end
 		TriggerScreenblurFadeOut(0)
 	end

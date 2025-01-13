@@ -1,15 +1,19 @@
 return {
 	UI = {
-		-- Cart Header
-		cartTitle = "Shopping",
-		cartTag = "Cart",
-		cartDescription = "Review your chosen items and proceed to secure, easy checkout with multiple payment options.",
-
-		-- Buttons
-		addCart = "Add To Cart",
-		paymentTitle = "PAYMENT",
-		payBank = "Bank",
-		payCash = "Cash",
+		cartHeader = {
+			title = "shopping",
+			tag = "cart",
+			description = "Review your chosen items and proceed to secure, easy checkout with multiple payment options.",
+		},
+		buttons = {
+			addCart = "Add To Cart",
+			payBank = "Bank",
+			payCash = "Cash",
+		},
+		item = {
+			paymentTitle = "Payment",
+		},
+		currencySymbol = "$",
 	},
 	Notification = {
 		HasWeapon = "You cannot carry multiple **%s*'s*.",

@@ -9,8 +9,20 @@ return {
 	DebugMode = false, -- Enable print statements for debugging
 	WeaponAsItem = true, -- Treat weapons as inventory items (only supported inventorys)
 	OxInventory = true, -- Uses ox_inventory exports if true
-	ImagePath = "item_images/", -- Use "nui://{YOUR_RESOURCE}/{IMAGE_DIRECTORY}" to use images from another resource (e.g., "nui://ox_inventory/web/images/" for ox_inventory)
-	CurrencySymbol = "$",
+
+	ImagePath = "nui://ox_inventory/web/images/",
+	--[[
+	Image Path Configuration Options:
+	
+	1. Local folder (relative to resource):
+	   "img/items/"
+	
+	2. External resource (other resources' images):
+	   "nui://RESOURCE_NAME/PATH_TO_IMAGES/"
+	   Example: "nui://ox_inventory/web/images/" for ox_inventory images
+	
+	Note: Make sure the path ends with a forward slash "/"
+	]]
 
 	--[[ INTERACTION CONFIGURATION ]]
 
@@ -34,7 +46,7 @@ return {
 	--[[ SHOP CONFIGURATIONS ]]
 
 	Shops = {
-		["shop"] = {
+		["market"] = {
 			Locations = {
 				vec4(372.8008, 328.1116, 103.5665, 262.1354), -- Clinton Ave
 				vec4(2555.5110, 380.7313, 108.6229, 0.9597), -- Palomino Ave
@@ -93,9 +105,9 @@ return {
 				{ name = "medikit", label = "Medikit", category = "healing", price = 200 },
 			},
 			Locales = {
-				mainTitle = "Shop",
-				mainTag = "24/7",
-				mainDescription = "Welcome to your local shop, where we're always here for you, day or night!\nExplore a curated selection of premium goods, tailored to meet your every need.",
+				title = "market",
+				tag = "24/7",
+				description = "Welcome to your local market, where we're always here for you, day or night!\nExplore a curated selection of premium goods, tailored to meet your every need.",
 			},
 			Blip = {
 				Name = "Shop [24/7]",
@@ -223,9 +235,9 @@ return {
 				{ name = "at_muzzle_bell", label = "Bell Muzzle", category = "attachments", price = 250 },
 			},
 			Locales = {
-				mainTitle = "Weapon Shop",
-				mainTag = "24/7",
-				mainDescription = "Welcome to your local weapon shop, where we're always here for you, day or night!\nExplore a curated selection of premium goods, tailored to meet your every need.",
+				title = "weapon shop",
+				tag = "24/7",
+				description = "Welcome to your local weapon shop, where we're always here for you, day or night!\nExplore a curated selection of premium goods, tailored to meet your every need.",
 			},
 			Blip = {
 				Name = "Weapon Shop [24/7]",

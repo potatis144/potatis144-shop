@@ -1,1 +1,2 @@
-web/build/*
+release
+create-release-git.bat

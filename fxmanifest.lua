@@ -6,7 +6,7 @@ use_experimental_fxv2_oal "yes"
 
 author "yiruzu"
 description "Cloud Resources - Shop"
-version "1.1.7"
+version "1.2.0"
 
 discord "https://discord.gg/jAnEnyGBef"
 repository "https://github.com/yiruzu/cloud-shop"
@@ -17,5 +17,5 @@ shared_scripts { "@ox_lib/init.lua", "shared/sh_functions.lua" }
 server_scripts { "bridge/server/*.lua", "server/*.lua" }
 client_scripts { "client/*.lua" }
 
-ui_page { "web/build/index.html" }
-files { "web/build/**/*" }
+ui_page { "web/dist/index.html" }
+files { "web/dist/**/*" }

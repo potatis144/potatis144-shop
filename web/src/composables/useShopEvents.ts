@@ -26,20 +26,20 @@ export const useShopEvents = () => {
   const getCategories = async () => {
     const data = await fetchData({ label: "getCategories" })
     if (data) {
-      Object.assign(shopStore.categories, data.categories ?? [])
+      shopStore.categories = data.categories ?? []
     }
   }
   const getItems = async () => {
     const data = await fetchData({ label: "getItems" })
     if (data) {
-      Object.assign(shopStore.items, data.items ?? [])
+      shopStore.items = data.items ?? []
     }
   }
   const getLocales = async () => {
     const data = await fetchData({ label: "getLocales" })
     if (data) {
       shopStore.imagePath = data.imagePath ?? shopStore.imagePath
-      Object.assign(shopStore.locales, data.locales ?? {})
+      shopStore.locales = data.locales ?? {}
     }
   }
 

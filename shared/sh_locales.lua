@@ -1,36 +1,36 @@
 return {
-    UI = {
-        cartHeader = {
-            title = "shopping",
-            tag = "korg",
-            description = "Granska dina valda artiklar och gå vidare till en säker och enkel utcheckning med flera betalningsalternativ.",
-        },
-        buttons = {
-            addCart = "Lägg till i korgen",
-            payBank = "Bank",
-            payCash = "Kontanter",
-        },
-        item = {
-            paymentTitle = "Betalning",
-        },
-        currencySymbol = "kr",
-    },
-    Notification = {
-        HasWeapon = "Du kan inte bära flera %s.",
-        CantCarry = "Du kan inte bära %s.",
-        NoMoney = "Du har inte tillräckligt med pengar för att köpa %s.",
-        PurchaseSuccess = "Framgångsrikt köp på vara för %skr.",
-        WrongJob = "Du har inte det krävande jobbet för att öppna denna butik."
-    },
-    License = {
-        LicenseRequired = "En %s krävs för att få tillgång till denna butik!",
-        DialogHeader = "En **%s** krävs för att få tillgång till denna butik!",
-        DialogContent = "Vill du köpa en %s för %skr?",
-        NoMoney = "Du har inte tillräckligt med pengar för att köpa %s.",
-        PurchaseSuccess = "Framgångsrikt köpt en %s för %skr.",
-    },
-    OpenShop = {
-        TextUI = "~INPUT_CONTEXT~  Visa produktkatalog",
-        Target = "Visa produktkatalog",
-    },
+	UI = {
+		cartHeader = {
+			title = "shopping",
+			tag = "cart",
+			description = "Review your chosen items and proceed to secure, easy checkout with multiple payment options.",
+		},
+		buttons = {
+			addCart = "Add To Cart",
+			payBank = "Bank",
+			payCash = "Cash",
+		},
+		item = {
+			paymentTitle = "Payment",
+		},
+		currencySymbol = "$",
+	},
+	Notification = {
+		HasWeapon = "You cannot carry multiple **%s*'s*.",
+		CantCarry = "You cannot carry the **%s**.",
+		NoMoney = "You don't have enough money to buy the **%s**.",
+		PurchaseSuccess = "Successfully purchased item(s) for **$%s**.",
+        WrongJob = "You don't have the demanding job to open this store."
+	},
+	License = {
+		LicenseRequired = "A **%s** is required to access this shop!",
+		DialogHeader = "A **%s** is required to access this shop!",
+		DialogContent = "Would you like to purchase a **%s** for **$%s**?",
+		NoMoney = "You don't have enough money to buy the **%s**.",
+		PurchaseSuccess = "Successfully purchased a **%s** for **$%s**.",
+	},
+	OpenShop = {
+		TextUI = "~INPUT_CONTEXT~  View Product Catalog",
+		Target = "View Product Catalog",
+	},
 }

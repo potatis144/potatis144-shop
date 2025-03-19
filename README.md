@@ -1,4 +1,4 @@
-[![Banner](https://imgur.com/a/Ouaskug)](https://discord.gg/jAnEnyGBef)
+[![Banner](https://imgur.com/7VB45gl)](https://discord.gg/jAnEnyGBef)
 
 >!!!I HAVENT TESTED IT FOR ANY OTHER CORE THEN QBX_CORE!!!
 ## `⭐`丨NEW FEATURES

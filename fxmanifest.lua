@@ -4,12 +4,12 @@ game "gta5"
 lua54 "yes"
 use_experimental_fxv2_oal "yes"
 
-author "yiruzu"
-description "Cloud Resources - Shop"
+author "Potatis144"
+description "edited version of Cloud-Shop. Original: https://github.com/yiruzu"
 version "1.2.1"
 
-discord "https://discord.gg/jAnEnyGBef"
-repository "https://github.com/yiruzu/cloud-shop"
+discord "https://discord.gg/jAnEnyGBef" -- original discord not for the forked version forked verison dose not give support
+repository "https://github.com/potatis144/potatis-shop"
 license "CC BY-NC"
 
 files { "shared/sh_config.lua", "shared/sh_locales.lua" }

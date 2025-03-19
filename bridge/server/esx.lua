@@ -68,13 +68,13 @@ local function BuyLicense(source, shopData)
 	elseif bankAvailable >= amount then
 		accountType = "bank"
 	else
-		ServerNotify(source, Locales.License.NoMoney:format(licenseTypeLabel), "error")
+		Potatis144_ServerNotify(source, Locales.License.NoMoney:format(licenseTypeLabel), "error")
 		return false, "No money"
 	end
 
 	xPlayer.removeAccountMoney(accountType, amount)
 	TriggerEvent("esx_license:addLicense", source, licenseType)
-	ServerNotify(source, Locales.License.PurchaseSuccess:format(licenseTypeLabel, amount), "info")
+	Potatis144_ServerNotify(source, Locales.License.PurchaseSuccess:format(licenseTypeLabel, amount), "info")
 	return true, "Successfully bought license"
 end
 
@@ -117,7 +117,7 @@ local function ProcessTransaction(source, type, cartArray)
 					AddWeapon(source, item.name)
 					totalCartPrice = totalCartPrice + totalItemPrice
 				else
-					ServerNotify(source, Locales.Notification.HasWeapon:format(item.label), "error")
+					Potatis144_ServerNotify(source, Locales.Notification.HasWeapon:format(item.label), "error")
 				end
 			else
 				if CanCarryItem(source, item.name, item.quantity) then
@@ -125,30 +125,118 @@ local function ProcessTransaction(source, type, cartArray)
 					AddItem(source, item.name, item.quantity)
 					totalCartPrice = totalCartPrice + totalItemPrice
 				else
-					ServerNotify(source, Locales.Notification.CantCarry:format(item.label), "error")
+					Potatis144_ServerNotify(source, Locales.Notification.CantCarry:format(item.label), "error")
 				end
 			end
 		else
-			ServerNotify(source, Locales.Notification.NoMoney:format(item.label), "error")
+			Potatis144_ServerNotify(source, Locales.Notification.NoMoney:format(item.label), "error")
 		end
 	end
 
 	if totalCartPrice > 0 then
-		ServerNotify(source, Locales.Notification.PurchaseSuccess:format(totalCartPrice), "success")
+		Potatis144_ServerNotify(source, Locales.Notification.PurchaseSuccess:format(totalCartPrice), "success")
 		return true, ("Purchased item(s) for $%s"):format(totalCartPrice)
 	end
 	return false, "No items purchased"
 end
 
-lib.callback.register("cloud-shop:server:HasLicense", HasLicense)
-lib.callback.register("cloud-shop:server:BuyLicense", function(source, shopData)
+lib.callback.register("potatis-shop:server:HasLicense", HasLicense)
+lib.callback.register("potatis-shop:server:BuyLicense", function(source, shopData)
 	local success, reason = BuyLicense(source, shopData)
 	return success, reason
 end)
-lib.callback.register("cloud-shop:server:ProcessTransaction", function(source, type, cartArray)
+lib.callback.register("potatis-shop:server:ProcessTransaction", function(source, type, cartArray)
 	local success, reason = ProcessTransaction(source, type, cartArray)
 	return success, reason
 end)
-lib.callback.register("cloud-shop:server:InShop", function(source, status)
-	inShop[source] = status
+
+
+
+function GetNearestShop(playerCoords)
+    for shopId, shopConfig in pairs(Config.Shops) do
+        for _, location in ipairs(shopConfig.Locations) do
+            local shopCoords = vec3(location.x, location.y, location.z)
+            if #(playerCoords - shopCoords) < 5.0 then -- Adjust distance threshold as necessary
+                return shopId, shopConfig
+            end
+        end
+    end
+    return nil, nil -- No nearby shop found
+end
+
+lib.callback.register("potatis-shop:server:InShop", function(source, status)
+    local playerCoords = GetEntityCoords(GetPlayerPed(source))
+    local shopId, shopConfig = GetNearestShop(playerCoords)
+
+    if not shopConfig then
+        DebugPrint("Error: No nearby shop found for the player.")
+        return false
+    end
+
+    -- Check if Potatis144_JobLock is false; skip job check if so
+    if shopConfig.Potatis144_JobLock == false then
+        inShop[source] = status
+        return true
+    end
+
+    -- If Potatis144_JobLock is nil or empty, allow access as well
+    if not shopConfig.Potatis144_JobLock or shopConfig.Potatis144_JobLock == "" then
+        inShop[source] = status
+        return true
+    end
+
+    -- Potatis144_JobLock is true, so we need to check the specific jobs
+    if shopConfig.Potatis144_JobLock == true then
+        if not shopConfig.Potatis144_JobName then
+            DebugPrint("Error: Potatis144_JobName is not defined while Potatis144_JobLock is true.")
+            return false
+        end
+
+        local job = GetPlayerJob(source)
+        DebugPrint("Player's Job: " .. (job and job.name or "None"))
+
+        local Potatis144_JobLock = {}
+        for Potatis144_JobName in string.gmatch(shopConfig.Potatis144_JobName, "[^, ]+") do -- Split jobs by comma
+            table.insert(Potatis144_JobLock, Potatis144_JobName)
+        end
+
+        local hasRequiredJob = false
+        for _, requiredJob in ipairs(Potatis144_JobLock) do
+            if job and job.name == requiredJob then
+                hasRequiredJob = true
+                break
+            end
+        end
+
+        if hasRequiredJob then
+            inShop[source] = status
+            return true
+        else
+            -- Botify the player they do not have the required job
+            Potatis144_Notify(Locales.Notification.WrongJob, "error")
+            return false
+        end
+    end
 end)
+
+local function OpenShop(shopId)
+    local shopData = Config.Shops[shopId]
+    if not shopData then
+        DebugPrint("Invalid shopId:", shopId)
+        return
+    end
+
+    local playerData = ESX.GetPlayerData()
+    local job = playerData and playerData.job or nil
+
+    currentShop = shopData -- Set current shop
+
+    if shopData.License.Required then
+        -- Check if you should handle it here or trigger UI to buy license
+        return HandleShopWithLicense() -- Ensure this function is defined
+    elseif job and job.name == shopData.Potatis144_JobLock then
+        OpenShopUI(shopData)
+    else
+        Potatis144_Notify(Locales.Notification.WrongJob, "error")
+    end
+end

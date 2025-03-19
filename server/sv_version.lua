@@ -1,1 +1,1 @@
-lib.versionCheck("yiruzu/cloud-shop")
+lib.versionCheck("yiruzu/potatis-shop")

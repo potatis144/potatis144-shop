@@ -1,30 +1,46 @@
 local Config = require("shared.sh_config")
 
---- Sends a notification to a specific player on the client.
----@param msg string -- Notification message
----@param type string -- Notification type (e.g., "success", "error", "info")
-function ClientNotify(msg, type)
-	lib.notify({
-		title = "Shop",
-		description = msg,
-		type = type,
-		position = "top-left",
-		duration = 5000,
-	})
+-- Sends a notification to a specific player on the server.
+-- source number -- Player's source ID
+-- text string -- Notification message
+-- type string -- Notification type (e.g., "success", "error", "info", "warning", "neutral", "phonemessage")
+function Potatis144_ClientNotify(msg, type)
+	--okok notify
+	if Config.Potatis144_NotifySystem == 'okoknotify' then
+		exports['okokNotify']:Alert('', msg, 1500, type, playSound)
+
+	--ox notify
+	elseif Config.Potatis144_NotifySystem == "oxnotify" then
+		lib.notify({
+			title = "",
+			description = msg,
+			type = type,
+			position = "top-left",
+			duration = 1500,
+		})
+	else
+		DebugPrint("You need to select a notify system from the options of notify systems you can use.")
+	end
 end
 
---- Sends a notification to a specific player on the server.
----@param source number -- Player's source ID
----@param msg string -- Notification message
----@param type string -- Notification type (e.g., "success", "error", "info")
-function ServerNotify(source, msg, type)
+
+function Potatis144_ServerNotify(source, msg, type)
+	--okok notify
+	if Config.Potatis144_NotifySystem == 'okoknotify' then
+		TriggerClientEvent('okokNotify:Alert', source, '', msg, 1500, type, playSound)
+
+		-- oxnotify
+	elseif Config.Potatis144_NotifySystem == "oxnotify" then
 	TriggerClientEvent("ox_lib:notify", source, {
-		title = "Shop",
+		title = "",
 		description = msg,
 		type = type,
 		position = "top-left",
-		duration = 5000,
+		duration = 1500,
 	})
+else
+	DebugPrint("You need to select a notify system from the options of notify systems you can use.")
+end
 end
 
 --- Displays a text-based UI message for the current frame.

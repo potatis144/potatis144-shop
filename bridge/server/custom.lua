@@ -167,15 +167,102 @@ local function ProcessTransaction(source, type, cartArray)
 	return false, "No items purchased"
 end
 
-lib.callback.register("cloud-shop:server:HasLicense", HasLicense)
-lib.callback.register("cloud-shop:server:BuyLicense", function(source, shopData)
+lib.callback.register("potatis-shop:server:HasLicense", HasLicense)
+lib.callback.register("potatis-shop:server:BuyLicense", function(source, shopData)
 	local success, reason = BuyLicense(source, shopData)
 	return success, reason
 end)
-lib.callback.register("cloud-shop:server:ProcessTransaction", function(source, type, cartArray)
+lib.callback.register("potatis-shop:server:ProcessTransaction", function(source, type, cartArray)
 	local success, reason = ProcessTransaction(source, type, cartArray)
 	return success, reason
 end)
-lib.callback.register("cloud-shop:server:InShop", function(source, status)
-	inShop[source] = status
+
+
+function GetNearestShop(playerCoords)
+    for shopId, shopConfig in pairs(Config.Shops) do
+        for _, location in ipairs(shopConfig.Locations) do
+            local shopCoords = vec3(location.x, location.y, location.z)
+            if #(playerCoords - shopCoords) < 5.0 then -- Adjust distance threshold as necessary
+                return shopId, shopConfig
+            end
+        end
+    end
+    return nil, nil -- No nearby shop found
+end
+
+lib.callback.register("potatis-shop:server:InShop", function(source, status)
+    local playerCoords = GetEntityCoords(GetPlayerPed(source))
+    local shopId, shopConfig = GetNearestShop(playerCoords)
+
+    if not shopConfig then
+        DebugPrint("Error: No nearby shop found for the player.")
+        return false
+    end
+
+    -- Check if Potatis144_JobLock is false; skip job check if so
+    if shopConfig.Potatis144_JobLock == false then
+        inShop[source] = status
+        return true
+    end
+
+    -- If Potatis144_JobLock is nil or empty, allow access as well
+    if not shopConfig.Potatis144_JobLock or shopConfig.Potatis144_JobLock == "" then
+        inShop[source] = status
+        return true
+    end
+
+    -- Potatis144_JobLock is true, so we need to check the specific jobs
+    if shopConfig.Potatis144_JobLock == true then
+        if not shopConfig.Potatis144_JobName then
+            DebugPrint("Error: Potatis144_JobName is not defined while Potatis144_JobLock is true.")
+            return false
+        end
+
+        local job = GetPlayerJob(source)
+        DebugPrint("Player's Job: " .. (job and job.name or "None"))
+
+        local Potatis144_JobLock = {}
+        for Potatis144_JobName in string.gmatch(shopConfig.Potatis144_JobName, "[^, ]+") do -- Split jobs by comma
+            table.insert(Potatis144_JobLock, Potatis144_JobName)
+        end
+
+        local hasRequiredJob = false
+        for _, requiredJob in ipairs(Potatis144_JobLock) do
+            if job and job.name == requiredJob then
+                hasRequiredJob = true
+                break
+            end
+        end
+
+        if hasRequiredJob then
+            inShop[source] = status
+            return true
+        else
+            -- Botify the player they do not have the required job
+            Potatis144_Notify(Locales.Notification.WrongJob, "error")
+            return false
+        end
+    end
 end)
+
+local function OpenShop(shopId)
+    local shopData = Config.Shops[shopId]
+    if not shopData then
+        DebugPrint("Invalid shopId:", shopId)
+        return
+    end
+
+    local playerData = exports.custom_core:GetPlayerData()
+    local job = playerData and playerData.job or nil
+
+    currentShop = shopData -- Set current shop
+
+    if shopData.License.Required then
+        -- Check if you should handle it here or trigger UI to buy license
+        return HandleShopWithLicense() -- Ensure this function is defined
+    elseif job and job.name == shopData.Potatis144_JobLock then
+        OpenShopUI(shopData)
+    else
+        Potatis144_Notify(Locales.Notification.WrongJob, "error")
+    end
+end

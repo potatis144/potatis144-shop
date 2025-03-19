@@ -118,19 +118,30 @@ end
 
 --[[ MAIN FUNCTIONS ]]
 
-local function OpenShopUI()
-	ToggleHud(false)
-	SendNUIMessage({ action = "toggleShop", showShop = true })
-	SetNuiFocus(true, true)
-	inShop = true
+local function OpenShopUI(shopData)
+    if not shopData then 
+        DebugPrint("OpenShopUI called without valid shopData!")
+        return 
+    end -- Prevent errors
 
-	DebugPrint("[OpenShopUI]", json.encode({ "Categories:", currentShop.Categories, "Items:", currentShop.Items }))
+    DebugPrint("Shop Data Found:", json.encode(shopData))
 
-	lib.callback.await("cloud-shop:server:InShop", false, true)
-	TriggerScreenblurFadeIn(0)
+    currentShop = shopData
+    inShop = true
 
-	ApplySpeechToPed("Generic_Hi", "Speech_Params_Force")
+    ToggleHud(false)
+    SendNUIMessage({ action = "toggleShop", showShop = true })
+    SetNuiFocus(true, true)
+
+    DebugPrint("[OpenShopUI]", json.encode({ "Categories:", currentShop.Categories, "Items:", currentShop.Items }))
+
+    lib.callback.await("potatis-shop:server:InShop", false, true)
+    TriggerScreenblurFadeIn(0)
+
+    ApplySpeechToPed("Generic_Hi", "Speech_Params_Force")
 end
+
+
 
 local function BuyLicenseDialog()
 	local buyLicenseDialog = lib.alertDialog({
@@ -141,49 +152,105 @@ local function BuyLicenseDialog()
 		size = "xs",
 	})
 	if buyLicenseDialog == "confirm" then
-		lib.callback.await("cloud-shop:server:InShop", false, true)
+		lib.callback.await("potatis-shop:server:InShop", false, true)
 
-		local success, reason = lib.callback.await("cloud-shop:server:BuyLicense", false, currentShop)
+		local success, reason = lib.callback.await("potatis-shop:server:BuyLicense", false, currentShop)
 		DebugPrint("[BuyLicenseDialog]", reason)
 
 		local sound = success and "ROBBERY_MONEY_TOTAL" or "CHECKPOINT_MISSED"
 		local soundSet = success and "HUD_FRONTEND_CUSTOM_SOUNDSET" or "HUD_MINI_GAME_SOUNDSET"
 		PlaySoundFrontend(-1, sound, soundSet, true)
 
-		lib.callback.await("cloud-shop:server:InShop", false, false)
+		lib.callback.await("potatis-shop:server:InShop", false, false)
 	end
 end
 
 local function HandleShopWithLicense()
-	local hasLicense = lib.callback.await("cloud-shop:server:HasLicense", false, currentShop.License.Type)
-	if hasLicense then
-		OpenShopUI()
-	else
-		if not currentShop.License.BuyDialog then ClientNotify(Locales.License.LicenseRequired:format(currentShop.License.TypeLabel), "error") end
-		if currentShop.License.BuyDialog then BuyLicenseDialog() end
-	end
+    if not currentShop or not currentShop.License then
+        DebugPrint("HandleShopWithLicense: No valid shop or license data!")
+        return
+    end
+
+    DebugPrint("Checking if player has license for:", currentShop.License.Type)
+
+    local hasLicense = lib.callback.await("potatis-shop:server:HasLicense", false, currentShop.License.Type)
+    if hasLicense then
+        DebugPrint("Player has license, opening shop UI...")
+        OpenShopUI(currentShop)
+    else
+        DebugPrint("Player does NOT have license.")
+        if not currentShop.License.BuyDialog then 
+			Potatis144_ClientNotify(Locales.License.LicenseRequired:format(currentShop.License.TypeLabel), "error")
+        end
+        if currentShop.License.BuyDialog then 
+            BuyLicenseDialog() 
+        end
+    end
 end
 
 local function OpenShop(shopId)
-	currentShop = Config.Shops[shopId]
-	if currentShop.License.Required then
-		HandleShopWithLicense()
-	else
-		OpenShopUI()
-	end
+    DebugPrint("OpenShop Triggered shopId:", shopId)
+
+    local shopData = Config.Shops[shopId]
+    if not shopData then
+        DebugPrint("Invalid shopId:", shopId)
+        return
+    end
+
+    local playerData = exports.qbx_core:GetPlayerData()
+    local job = playerData and playerData.job or nil
+
+    DebugPrint("Opening Shop:", shopId, "Job:", job and job.name, "Required Job:", shopData.Potatis144_JobName)
+
+    currentShop = shopData -- Set current shop properly
+
+    -- Check for license requirements
+    if shopData.License.Required then
+        DebugPrint("Handling shop with license...")
+        HandleShopWithLicense()
+        return
+    end
+    
+    if shopData.Potatis144_JobLock then -- Handle job locking
+        local Potatis144_JobLock = {}
+        for Potatis144_JobName in string.gmatch(shopData.Potatis144_JobName, "[^, ]+") do -- Split jobs by comma
+            table.insert(Potatis144_JobLock, Potatis144_JobName)
+        end
+        
+        local hasRequiredJob = false
+        for _, requiredJob in ipairs(Potatis144_JobLock) do
+            if job and job.name == requiredJob then
+                hasRequiredJob = true
+                break
+            end
+        end
+
+        if hasRequiredJob then
+            DebugPrint("Player has one of the required jobs, opening shop UI...")
+            OpenShopUI(shopData)
+        else
+            DebugPrint("Player does not have the required job.")
+            Potatis144_Notify(Locales.Notification.WrongJob, "error")
+        end
+    else
+        DebugPrint("No job requirement, opening shop UI...")
+        OpenShopUI(shopData)
+    end
 end
 
 local function CloseShopUI()
-	ToggleHud(true)
-	SendNUIMessage({ action = "toggleShop", showShop = false })
-	SetNuiFocus(false, false)
-	inShop = false
+    ToggleHud(true)
+    SendNUIMessage({ action = "toggleShop", showShop = false })
+    SetNuiFocus(false, false)
+    inShop = false
+    currentShop = nil -- Reset the shop state
 
-	lib.callback.await("cloud-shop:server:InShop", false, false)
-	TriggerScreenblurFadeOut(0)
+    lib.callback.await("potatis-shop:server:InShop", false, false)
+    TriggerScreenblurFadeOut(0)
 
-	ApplySpeechToPed("Generic_Bye", "Speech_Params_Force")
+    ApplySpeechToPed("Generic_Bye", "Speech_Params_Force")
 end
+
 
 --[[ MAIN LOGIC ]]
 
@@ -248,7 +315,7 @@ end
 -- [[ NUI LOGIC ]]
 
 local function HandleTransaction(transactionType, cartArray)
-	local success, reason = lib.callback.await("cloud-shop:server:ProcessTransaction", false, transactionType, cartArray)
+	local success, reason = lib.callback.await("potatis-shop:server:ProcessTransaction", false, transactionType, cartArray)
 	DebugPrint("[BuyLicenseDialog]", reason)
 
 	local sound = success and "ROBBERY_MONEY_TOTAL" or "CHECKPOINT_MISSED"

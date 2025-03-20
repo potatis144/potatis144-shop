@@ -230,7 +230,7 @@ local function OpenShop(shopId)
             OpenShopUI(shopData)
         else
             DebugPrint("Player does not have the required job.")
-            Potatis144_Notify(Locales.Notification.WrongJob, "error")
+            Potatis144_ClientNotify(Locales.Notification.WrongJob, "error")
         end
     else
         DebugPrint("No job requirement, opening shop UI...")

@@ -19,7 +19,7 @@ function Potatis144_ClientNotify(msg, type)
 			duration = 1500,
 		})
 	else
-		DebugPrint("You need to select a notify system from the options of notify systems you can use.")
+		Print("You need to select a notify system from the options of notify systems you can use.")
 	end
 end
 
@@ -38,7 +38,7 @@ function Potatis144_ServerNotify(source, msg, type)
 		duration = 1500,
 	})
 else
-	DebugPrint("You need to select a notify system from the options of notify systems you can use.")
+	Print("You need to select a notify system from the options of notify systems you can use.")
 end
 end
 

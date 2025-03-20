@@ -6,6 +6,7 @@
 - Added a JobLock system so that you can have shops for specific jobs
 - Added support for qbx_core
 - Added support for okokNotify
+- Added support for changing language and adding swedish
 
 ## `⭐`丨Old Features
 
@@ -18,10 +19,11 @@
 
 > [YouTube](https://www.youtube.com/watch?v=8bjrRzsAj08)
 
-|                           |                                                             |
-| ------------------------- | ----------------------------------------------------------- |
-| 🛠️・Supported Frameworks: | ESX / QBCore / qbxCore /Custom                              |
-| ⚠️・Dependencies:         | [ox_lib](https://github.com/overextended/ox_lib/releases/)  |
-| ❓・Support:              | [Discord Server](https://discord.gg/jAnEnyGBef)             |
-| ⚖️・License:              | [CC BY-NC](https://creativecommons.org/licenses/by-nc/4.0/) |
-| 📄・Lines of Code:        | A LOT IG                                                    |
+|                           |                                                                  |
+| ------------------------- | -----------------------------------------------------------      |
+| 🛠️・Supported Frameworks: | ESX / QBCore / qbxCore / Custom                                  |
+| ⚠️・Dependencies:         | [ox_lib](https://github.com/overextended/ox_lib/releases/)       |
+| ❓・Support:              | [Discord Server](https://discord.gg/jAnEnyGBef) NO FORK SUPPORT  |
+| ⚖️・License:              | [CC BY-NC](https://creativecommons.org/licenses/by-nc/4.0/)      |
+| ------------------------- | -----------------------------------------------------------      |
+|                           |                                                                  |

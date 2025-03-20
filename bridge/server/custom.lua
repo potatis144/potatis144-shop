@@ -1,7 +1,7 @@
 ---@diagnostic disable: undefined-field
 
 local Config = require("shared.sh_config")
-local Locales = require("shared.sh_locales")
+local Locales = require("locales." .. Config.Potatis144_Lang)
 
 if Config.Framework ~= "custom" then return end
 

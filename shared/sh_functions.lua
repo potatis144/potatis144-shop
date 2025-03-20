@@ -23,7 +23,6 @@ function Potatis144_ClientNotify(msg, type)
 	end
 end
 
-
 function Potatis144_ServerNotify(source, msg, type)
 	--okok notify
 	if Config.Potatis144_NotifySystem == 'okoknotify' then
@@ -42,6 +41,16 @@ else
 	DebugPrint("You need to select a notify system from the options of notify systems you can use.")
 end
 end
+
+CreateThread(function()
+    local url = "https://raw.githubusercontent.com/potatis144/potatis144-shop/main/server/version.txt"
+    local version = GetResourceMetadata('potatis144-shop', "version" )
+     PerformHttpRequest(url, function(err, textver, headers)
+         if (text ~= nil) then
+                print('^2 Your Version:' .. version .. ' | Current Version:' .. textver .. '' )  
+         end
+     end, "GET", "", "")
+end)
 
 --- Displays a text-based UI message for the current frame.
 ---@param text string -- The message to display

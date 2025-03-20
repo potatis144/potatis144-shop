@@ -6,7 +6,7 @@ use_experimental_fxv2_oal "yes"
 
 author "Potatis144"
 description "edited version of Cloud-Shop. Original: https://github.com/yiruzu"
-version "2.0.1"
+version "1.0.0"
 
 discord "https://discord.gg/jAnEnyGBef" -- original discord not for the forked version forked verison dose not give support
 repository "https://github.com/potatis144/potatis144-shop"

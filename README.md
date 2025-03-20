@@ -6,7 +6,7 @@
 - Added a JobLock system so that you can have shops for specific jobs
 - Added support for qbx_core
 - Added support for okokNotify
-- Added support for changing language and adding swedish
+- Added support for eazy to changing language and adding swedish
 
 ## `⭐`丨Old Features
 

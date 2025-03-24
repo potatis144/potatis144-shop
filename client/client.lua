@@ -250,10 +250,7 @@ end
         else
             DebugPrint("Player does not have the required job.")
             Potatis144_ClientNotify(Locales.Notification.WrongJob, "error")
-<<<<<<< Updated upstream
-=======
             return
->>>>>>> Stashed changes
         end
     end
 

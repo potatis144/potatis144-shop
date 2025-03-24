@@ -18,6 +18,12 @@ local function GetPlayerJob(source)
     return Player.PlayerData.job
 end
 
+local function GetPlayerGang(source)
+    local Player = GetPlayerId(source)
+    if not Player then return nil end
+    return Player.PlayerData.gang
+end
+
 local function CanCarryItem(source, itemName, itemQuantity)
     if Config.OxInventory then
         return exports.ox_inventory:CanCarryItem(source, itemName, itemQuantity)
@@ -168,19 +174,13 @@ lib.callback.register("potatis-shop:server:InShop", function(source, status)
         return false
     end
 
-    -- Check if Potatis144_JobLock is false; skip job check if so
-    if shopConfig.Potatis144_JobLock == false then
+    -- Allow access if Job Lock is disabled or not set
+    if shopConfig.Potatis144_JobLock == false or shopConfig.Potatis144_JobLock == nil or shopConfig.Potatis144_JobLock == "" then
         inShop[source] = status
         return true
     end
 
-    -- If Potatis144_JobLock is nil or empty, allow access as well
-    if not shopConfig.Potatis144_JobLock or shopConfig.Potatis144_JobLock == "" then
-        inShop[source] = status
-        return true
-    end
-
-    -- Potatis144_JobLock is true, so we need to check the specific jobs
+    -- Job Lock is enabled, so check for required job
     if shopConfig.Potatis144_JobLock == true then
         if not shopConfig.Potatis144_JobName then
             DebugPrint("Error: Potatis144_JobName is not defined while Potatis144_JobLock is true.")
@@ -190,28 +190,67 @@ lib.callback.register("potatis-shop:server:InShop", function(source, status)
         local job = GetPlayerJob(source)
         DebugPrint("Player's Job: " .. (job and job.name or "None"))
 
-        local Potatis144_JobLock = {}
-        for Potatis144_JobName in string.gmatch(shopConfig.Potatis144_JobName, "[^, ]+") do -- Split jobs by comma
-            table.insert(Potatis144_JobLock, Potatis144_JobName)
+        -- Convert job names into a table
+        local requiredJobs = {}
+        for jobName in string.gmatch(shopConfig.Potatis144_JobName, "[^, ]+") do
+            table.insert(requiredJobs, jobName)
         end
 
+        -- Check if the player has the required job
         local hasRequiredJob = false
-        for _, requiredJob in ipairs(Potatis144_JobLock) do
+        for _, requiredJob in ipairs(requiredJobs) do
             if job and job.name == requiredJob then
                 hasRequiredJob = true
                 break
             end
         end
 
-        if hasRequiredJob then
-            inShop[source] = status
-            return true
-        else
-            -- Botify the player they do not have the required job
-            Potatis144_Notify(Locales.Notification.WrongJob, "error")
+        if not hasRequiredJob then
+            Potatis144_ServerNotify(source, Locales.Notification.WrongJob, "error") -- Ensure source is passed
             return false
         end
     end
+
+    -- Allow access if Gang Lock is disabled or not set
+    if shopConfig.Potatis144_GangLock == false or shopConfig.Potatis144_GangLock == nil or shopConfig.Potatis144_GangLock == "" then
+        inShop[source] = status
+        return true
+    end
+
+    -- Gang Lock is enabled, so check for required gang
+    if shopConfig.Potatis144_GangLock == true then
+        if not shopConfig.Potatis144_GangName then
+            DebugPrint("Error: Potatis144_GangName is not defined while Potatis144_GangLock is true.")
+            return false
+        end
+
+        local gang = GetPlayerGang(source)
+        DebugPrint("Player's Gang: " .. (gang and gang.name or "None"))
+
+        -- Convert gang names into a table
+        local requiredGangs = {}
+        for gangName in string.gmatch(shopConfig.Potatis144_GangName, "[^, ]+") do
+            table.insert(requiredGangs, gangName)
+        end
+
+        -- Check if the player has the required gang
+        local hasRequiredGang = false
+        for _, requiredGang in ipairs(requiredGangs) do
+            if gang and gang.name == requiredGang then
+                hasRequiredGang = true
+                break
+            end
+        end
+
+        if not hasRequiredGang then
+            Potatis144_ServerNotify(source, Locales.Notification.WrongGang, "error") -- Ensure source is passed
+            return false
+        end
+    end
+
+    -- Player has met all conditions
+    inShop[source] = status
+    return true
 end)
 
 local function OpenShop(shopId)

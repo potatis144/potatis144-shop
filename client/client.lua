@@ -197,9 +197,27 @@ local function OpenShop(shopId)
         return
     end
 
+	if Config.Framework == "qbxcore" then -- qbxcore
     local playerData = exports.qbx_core:GetPlayerData()
-    local job = playerData and playerData.job or nil
 
+    elseif Config.Framework == "esx" then -- esxcore
+	local playerData = exports.ESX.GetPlayerData()
+
+    elseif Config.Framework == "qbcore" then -- qbcore
+    local playerData = exports.QBCore.GetPlayerData()
+
+    elseif Config.Framework == "custom" then -- custom core
+    local playerData = exports.custom.GetPlayerData()
+
+    else
+    DebugPrint("Error: Unknown framework in Change the config")
+    return
+end
+
+    local job = playerData and playerData.job or nil
+    local gang = playerData and playerData.gang or nil
+
+    DebugPrint("Opening Shop:", shopId, "Gang:", gang and gang.name, "Required Gang:", shopData.Potatis144_GangName)
     DebugPrint("Opening Shop:", shopId, "Job:", job and job.name, "Required Job:", shopData.Potatis144_JobName)
 
     currentShop = shopData -- Set current shop properly
@@ -210,10 +228,11 @@ local function OpenShop(shopId)
         HandleShopWithLicense()
         return
     end
-    
-    if shopData.Potatis144_JobLock then -- Handle job locking
+
+    -- Job lock
+    if shopData.Potatis144_JobLock then
         local Potatis144_JobLock = {}
-        for Potatis144_JobName in string.gmatch(shopData.Potatis144_JobName, "[^, ]+") do -- Split jobs by comma
+        for Potatis144_JobName in string.gmatch(shopData.Potatis144_JobName, "[^, ]+") do
             table.insert(Potatis144_JobLock, Potatis144_JobName)
         end
         
@@ -231,12 +250,42 @@ local function OpenShop(shopId)
         else
             DebugPrint("Player does not have the required job.")
             Potatis144_ClientNotify(Locales.Notification.WrongJob, "error")
+<<<<<<< Updated upstream
+=======
+            return
+>>>>>>> Stashed changes
         end
-    else
-        DebugPrint("No job requirement, opening shop UI...")
-        OpenShopUI(shopData)
     end
-end
+
+    -- Gang lock
+    if shopData.Potatis144_GangLock then
+        local Potatis144_GangLock = {}
+        for Potatis144_GangName in string.gmatch(shopData.Potatis144_GangName, "[^, ]+") do
+            table.insert(Potatis144_GangLock, Potatis144_GangName)
+        end
+        
+        local hasRequiredGang = false
+        for _, requiredGang in ipairs(Potatis144_GangLock) do
+            if gang and gang.name == requiredGang then
+                hasRequiredGang = true
+                break
+            end
+        end
+
+        if hasRequiredGang then
+            DebugPrint("Player has one of the required gangs, opening shop UI...")
+            OpenShopUI(shopData)
+        else
+            DebugPrint("Player does not have the required gang.")
+            Potatis144_ClientNotify(Locales.Notification.WrongGang, "error")
+            return
+        end
+    end
+
+    -- Om ingen gang- eller jobblockering finns, öppna butiken direkt
+    DebugPrint("No job or gang requirement, opening shop UI...")
+    OpenShopUI(shopData)
+end		
 
 local function CloseShopUI()
     ToggleHud(true)

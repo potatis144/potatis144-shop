@@ -21,6 +21,7 @@ return {
 		NoMoney = "You don't have enough money to buy the %s.",
 		PurchaseSuccess = "Successfully purchased item(s) for $%s.",
         WrongJob = "You don't have the demanding job to open this store.",
+		WrongGang = "You don't have the demanding gang to open this store.",
 	},
 	License = {
 		LicenseRequired = "A %s is required to access this shop!",

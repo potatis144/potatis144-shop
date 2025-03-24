@@ -131,6 +131,8 @@ return {
 			Potatis144_JobLock = false, -- if this is true you will have a joblock
 			--Potatis144_JobName = "police", -- this is what job the store is locked to for example this is locked to the police job.
 			-- if you want more jobs you can seperate them with a comma for example: Potatis144_JobName = "job1, job2"
+			Potatis144_GangLock = false, -- works same as the job lock only that ists with gangs
+			--Potatis144_GangName = "vagos",
 
 			NpcPed = {
 				Model = `mp_m_shopkeep_01`,
@@ -260,6 +262,8 @@ return {
 			Potatis144_JobLock = true, -- if this is true you will have a joblock
 			Potatis144_JobName = "police", -- this is what job the store is locked to for example this is locked to the police job.
 			-- if you want more jobs you can seperate them with a comma for example: Potatis144_JobName = "job1, job2"
+			Potatis144_GangLock = false, -- works same as the job lock only that ists with gangs
+			--Potatis144_GangName = "vagos",
 
 			Blip = {
 				Name = "Weapon Shop [24/7]",

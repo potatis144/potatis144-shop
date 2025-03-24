@@ -21,6 +21,7 @@ return {
         NoMoney = "Du har inte tillräckligt med pengar för att köpa %s.",
         PurchaseSuccess = "Framgångsrikt köp på vara för %skr.",
         WrongJob = "Du har inte det krävande jobbet för att öppna denna butik.",
+        WrongGang = "Du har inte det krävande gänget för att öppna denna butik.",
     },
     License = {
         LicenseRequired = "En %s krävs för att få tillgång till denna butik!",

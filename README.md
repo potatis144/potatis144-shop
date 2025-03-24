@@ -1,8 +1,15 @@
-[![Banner](https://i.imgur.com/Qi8W9nh.png)](https://discord.gg/jAnEnyGBef)
+[![Banner](https://i.imgur.com/7VB45gl.png)](https://discord.gg/jAnEnyGBef)
 
-> Upgrade your FiveM server with our cutting-edge shop system that combines sleek design, high performance, and high customizability.
+>!!!I HAVENT TESTED IT FOR ANY OTHER CORE THEN QBX_CORE!!!
+## `⭐`丨NEW FEATURES
 
-## `⭐`丨Features
+- Added a JobLock system so that you can have shops for specific jobs
+- Added a GangLock system so that you can have shops for specific gangs
+- Added support for qbx_core
+- Added support for okokNotify
+- Added support for eazy to changing language and adding swedish
+
+## `⭐`丨Old Features
 
 - Modern & Intuitive Design: A visually stunning interface that enhances your players shopping experience.
 - Easy Installation & Setup: Get started in minutes with a hassle-free configuration process.
@@ -13,10 +20,9 @@
 
 > [YouTube](https://www.youtube.com/watch?v=8bjrRzsAj08)
 
-|                           |                                                             |
-| ------------------------- | ----------------------------------------------------------- |
-| 🛠️・Supported Frameworks: | ESX / QBCore / Custom                                       |
-| ⚠️・Dependencies:         | [ox_lib](https://github.com/overextended/ox_lib/releases/)  |
-| ❓・Support:              | [Discord Server](https://discord.gg/jAnEnyGBef)             |
-| ⚖️・License:              | [CC BY-NC](https://creativecommons.org/licenses/by-nc/4.0/) |
-| 📄・Lines of Code:        | ≈2.400+                                                     |
+|                           |                                                                  |
+| ------------------------- | -----------------------------------------------------------      |
+| 🛠️・Supported Frameworks: | ESX / QBCore / qbxCore / Custom                                  |
+| ⚠️・Dependencies:         | [ox_lib](https://github.com/overextended/ox_lib/releases/)       |
+| ❓・Support:              | [Discord Server](https://discord.gg/jAnEnyGBef) NO FORK SUPPORT  |
+| ⚖️・License:              | [CC BY-NC](https://creativecommons.org/licenses/by-nc/4.0/)      |

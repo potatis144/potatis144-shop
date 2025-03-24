@@ -18,7 +18,7 @@ return {
 
 	Framework = "qbxcore", -- Supported: "esx", "qbcore", "qbxcore" or "custom"
 	Potatis144_NotifySystem = "oxnotify", -- Supported okoknotify or oxnotify
-	Potatis144_Lang = "eng" -- Supported eng, swe
+	Potatis144_Lang = "eng", -- Supported eng, swe
 	DebugMode = false, -- Enable print statements for debugging
 	WeaponAsItem = true, -- Treat weapons as inventory items (only supported inventorys)
 	OxInventory = true, -- Uses ox_inventory exports if true -- if you dont use ox_inventory just install it and qbx needs oxinventory
